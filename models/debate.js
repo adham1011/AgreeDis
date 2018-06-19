@@ -7,30 +7,35 @@ var mongoose        =   require('mongoose'),
                 required: true
             },
             img:String,
-            debate_owner:Number,/*Usr_id*/
-            debate_collabrate:Number,/*Usr_id*/  
-        },
-        votes:{
-            owner_votes:{
-                type:Number,
-                default: 0
-            },
-            collabrate_votes:{
-                type:Number,
-                default: 0
-            },
             voters:{
                 type:[String],
                 default:[]
-            }
+            },
+            status:{
+                type: Number,
+                default: 0
+            }/*0 = pending /1 = running /2 = closed*/
+
         },
+    owner:{
+        owner_id:Number,
+        owner_votes:{
+                type:Number,
+                default: 0
+        }
+    },
+    collaborator:{
+        collaborator_id:Number,
+        collaborator_votes:{
+                type:Number,
+                default: 0
+        }
+
+        }
+    },{ versionKey: false });
         // timeOut:Date,/*end time*/
-        status:{
-            type: Number,
-            default: 0
-        }/*0 = pending /1 = running /2 = closed*/
         // timestamps: true,
-    })
+    
 
 debate.pre('save',
     (next)=>{
