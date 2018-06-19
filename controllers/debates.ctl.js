@@ -9,8 +9,12 @@ exports.createDebate = (req, res) =>{
         basic_info:{
             title:req.body.title,
             img:req.body.img,
-            debate_owner: debOwner,
-            debate_collabrate:req.body.collabrate
+        },
+        owner:{
+            owner_id:debOwner
+        },
+        collaborator:{
+            collaborator_id:req.body.collaborator
         }
     });
     newDebate.save(
@@ -19,9 +23,9 @@ exports.createDebate = (req, res) =>{
                 console.log(`Error: ${err}`);
                 res.json({Error:'ValidationError'})
             }else{
-                console.log(`Debate_id: ${product._id}\n debOwner:${product.basic_info.debate_owner}`);
+                console.log(`Debate_id: ${product._id}\n debOwner:${product.owner.owner_id}`);
                 var update = {$push:{debates:product._id}} ;
-                Users.findOneAndUpdate({id:product.basic_info.debate_owner}, update,
+                Users.findOneAndUpdate({id:product.owner.owner_id}, update,
                 (err)=>{
                     if(err) res.json({Error:'finding error'})
 
