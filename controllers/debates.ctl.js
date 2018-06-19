@@ -4,7 +4,7 @@ var   Debates    =  require('../models/debate'),
 
 
 exports.createDebate = (req, res) =>{
-    var debOwner = 411958;
+    var debOwner = 41195;
     var newDebate = new Debates({
         basic_info:{
             title:req.body.title,

@@ -4,8 +4,10 @@ var mongoose        =   require('mongoose'),
         profile:{
             email:String,
             password:String,
-            firstName:String,
-            lastName:String,
+            name:{
+                first:String,
+                last:String,
+            },
             age:Number,
             imgSrc:String,
         },
