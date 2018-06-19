@@ -35,8 +35,6 @@ var mongoose        =   require('mongoose'),
     },{ versionKey: false });
         // timeOut:Date,/*end time*/
         // timestamps: true,
-    
-
 debate.pre('save',
     (next)=>{
         console.log('before saving');
