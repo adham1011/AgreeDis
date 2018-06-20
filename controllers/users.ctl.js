@@ -65,9 +65,17 @@ exports.getUser = (req,res) =>{
     console.log(req.params.usr_id);
     Users.findOne({id:req.params.usr_id},'-profile.password',
      (err, result) => {
-             if(err) console.log(`ERROR FindOne failed :${err}`);
+            if(err){
+                console.log(`Error: ${err}`)
+                res.json({Error:err})
+            }
+             if(!result){
+              console.log(`ERROR FindOne failed :${err}`);
+              res.json({Error: 'User not found'});
+            }else{
              console.log(`into mongoose findone \n ${result}`);
              res.json(result);
+         }
              return;
     });
 
