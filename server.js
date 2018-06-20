@@ -4,6 +4,7 @@ const   express     = require('express'),
         userCtl     = require('./controllers/users.ctl'),
         debateCtl   = require('./controllers/debates.ctl'),
         port        = process.env.PORT || 3000;
+        session     = require('express-session');
 app.set('port',port);
 app.use('/', express.static('./public'));//for API
 app.use(
@@ -15,6 +16,7 @@ app.use(
 });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:true}));
+app.use(session({secret:'shjlowyi739d',resave: false, saveUninitialized:true}))
 
 /*** All routes ***/
 /*
@@ -22,9 +24,9 @@ app.use(bodyParser.urlencoded({ extended:true}));
 */
 
 // app.get('/search/:search_value')
-
+app.post('/profile/signIn',userCtl.signIn)
 /* Debate Set + Get */
-app.get('/debates/main')/*will get Top 10 recents Debates -sorting as user vip rate*/
+app.get('/debates/dashBoard',debateCtl.dashBoard)/*will get Top 10 recents Debates -sorting as user vip rate*/
 
 app.get('/debates/:debate_id',debateCtl.getById)
 
@@ -41,23 +43,12 @@ app.post('/debates/updateDebate') //debate_id as a parameter
 app.post('/debates/vote') // debate_id/choice as a parameter
 
 /* Users SET + Get */
-
 app.get('/profile/:usr_id',userCtl.getUser)
 
-app.post('/profile/createProfile') // profile data
+// app.post('/profile/createProfile') // profile data
 
 app.post('/profile/updateProfile') // profile_id as a parameter
 
-
-
-
-
-
-
-
-
-// app.get('/final-ideas/getAllIdeas', ideaCtl.getData);
-//app.get('/final-ideas/saveNewIdea', ideaCtl.saveData);
 
 app.listen(port,
     () => {

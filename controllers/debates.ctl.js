@@ -3,6 +3,15 @@ var   Debates    =  require('../models/debate'),
       Users      =  require('../models/user');
 
 
+exports.dashBoard = (req,res) =>{
+    if(!req.session.user){
+        res.json({Error:'You dont have permission'})
+        return;
+    }
+
+    res.json({user:req.session.user})
+    return;
+}
 
 exports.getById = (req, res) =>{
     Debates.findOne({_id:req.params.debate_id},
@@ -47,14 +56,15 @@ exports.getByUser = (req, res) =>{
 
 
 exports.createDebate = (req, res) =>{
-    var debOwner = 41195
+    var debOwner = Number(req.session.user.id) /*This will be dynamic id */
+    console.log(`\n${debOwner}\ntitle:${req.body.title}`)
     var newDebate = new Debates({
         basic_info:{
             title:req.body.title,
             img:req.body.img,
         },
         owner:{
-            owner_id:Number(debOwner)
+            owner_id:debOwner
         },
         collaborator:{
             collaborator_id:Number(req.body.collaborator)
