@@ -42,7 +42,7 @@ app.post('/debates/vote') // debate_id/choice as a parameter
 
 /* Users SET + Get */
 
-app.get('/profile/:usr_id')
+app.get('/profile/:usr_id',userCtl.getUser)
 
 app.post('/profile/createProfile') // profile data
 
