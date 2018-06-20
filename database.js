@@ -5,7 +5,8 @@ var consts       = require('./consts'),
 var Debates = require('./models/debate'),
     Users   = require('./models/user'),
     options = {
-        autoReconnect :true
+        autoReconnect:true,
+
 };
 mongoose.connect(consts.MLAB,options)
 .then(

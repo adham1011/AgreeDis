@@ -17,18 +17,25 @@ exports.getById = (req, res) =>{
             }else{
                 res.json(doc)
             }
+
             return;
         });
 }
 
 exports.getByUser = (req, res) =>{
-    Debates.find({owner.owner_id:req.params.usr_id},{collaborator.collaborator_id:req.params.usr_id},
+    var usr = Number(req.params.usr_id)
+    console.log(`\nSearching Debate for user: ${usr}`)
+
+    Debates.find({$or:[
+        {owner:{owner_id:usr}},
+        {collabrator:{collaborator_id:usr}}
+        ]},
     (err,docs)=>{
             if(err){
                 console.log(`Error: ${err}`)
                 res.json({Error:err})
             }
-            if(!docs){
+            if(docs.length == 0){
                 console.log(`Debate not found`)
                 res.json({Error:'user has No Debates'})
             }else{
@@ -36,22 +43,21 @@ exports.getByUser = (req, res) =>{
             }
             return;
         });
-    });
 }
 
 
 exports.createDebate = (req, res) =>{
-    var debOwner = 41195;
+    var debOwner = 41195
     var newDebate = new Debates({
         basic_info:{
             title:req.body.title,
             img:req.body.img,
         },
         owner:{
-            owner_id:debOwner
+            owner_id:Number(debOwner)
         },
         collaborator:{
-            collaborator_id:req.body.collaborator
+            collaborator_id:Number(req.body.collaborator)
         }
     });
     newDebate.save(
@@ -60,15 +66,15 @@ exports.createDebate = (req, res) =>{
                 console.log(`Error: ${err}`);
                 res.json({Error:'ValidationError'})
             }else{
-                console.log(`Debate_id: ${product._id}\n debOwner:${product.owner.owner_id}`);
+                console.log(`Debate_id: ${product._id}\ndebOwner:${product.owner.owner_id}`);
                 var update = {$push:{debates:product._id}} ;
                 Users.findOneAndUpdate({id:product.owner.owner_id}, update,
                 (err)=>{
                     if(err) res.json({Error:'finding error'})
 
                     res.json({success:1});
-                    // mongoose.disconnect();
                 })  
             }
+
             return;
     })}
