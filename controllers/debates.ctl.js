@@ -3,6 +3,15 @@ var   Debates    =  require('../models/debate'),
       Users      =  require('../models/user');
 
 
+exports.dashBoard = (req,res) =>{
+    if(!req.session.user){
+        res.json({Error:'You dont have permission'})
+        return;
+    }
+
+    res.json({user:req.session.user})
+    return;
+}
 
 exports.getById = (req, res) =>{
     Debates.findOne({_id:req.params.debate_id},
@@ -85,14 +94,15 @@ exports.deleteDebate = (req, res) =>{
 
 
 exports.createDebate = (req, res) =>{
-    var debOwner = 41195
+    var debOwner = Number(req.session.user.id) /*This will be dynamic id */
+    console.log(`\n${debOwner}\ntitle:${req.body.title}`)
     var newDebate = new Debates({
         basic_info:{
             title:req.body.title,
             img:req.body.img,
         },
         owner:{
-            owner_id:Number(debOwner)
+            owner_id:debOwner
         },
         collaborator:{
             collaborator_id:Number(req.body.collaborator)
@@ -104,14 +114,21 @@ exports.createDebate = (req, res) =>{
                 console.log(`Error: ${err}`);
                 res.json({Error:'ValidationError'})
             }else{
-                console.log(`Debate_id: ${product._id}\ndebOwner:${product.owner.owner_id}`);
                 var update = {$push:{debates:product._id}} ;
+                var updatecoll = {$push:{notifications:product._id}};
                 Users.findOneAndUpdate({id:product.owner.owner_id}, update,
-                (err)=>{
-                    if(err) res.json({Error:'finding error'})
-
-                    res.json({success:1});
-                })  
+                    err =>{
+                        if(err) console.log('Error with owner');
+                    }
+                );
+                Users.findOneAndUpdate({id:product.collaborator.collaborator_id},updatecoll,
+                    err=>{
+                        if(err) console.log('Error with callabrator');
+                        else {res.json(product)}
+                    }
+                );
+            
+                  
             }
 
             return;
