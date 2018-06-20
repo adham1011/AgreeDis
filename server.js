@@ -25,6 +25,8 @@ app.use(session({secret:'shjlowyi739d',resave: false, saveUninitialized:true}))
 
 // app.get('/search/:search_value')
 app.post('/profile/signIn',userCtl.signIn)
+
+app.all('*',userCtl.access)
 /* Debate Set + Get */
 app.get('/debates/dashBoard',debateCtl.dashBoard)/*will get Top 10 recents Debates -sorting as user vip rate*/
 

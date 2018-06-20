@@ -3,7 +3,14 @@ var   Users    =  require('../models/user');
 //access the MODEL
 //for route /final-ideas/getAllIdeas
 
-
+exports.access = (req, res, next)=>{
+    if(!req.session.user){
+        console.log("You don't authorized")
+        res.json({Error:'not authorized, try to sign in'})
+        return
+    }
+    return next()
+}
 exports.signIn = (req, res) =>{
     Users.findOne({"profile.email":req.body.email,"profile.password":req.body.password},
         (err,User)=>{
@@ -66,3 +73,10 @@ exports.getUser = (req,res) =>{
 
 
 }
+
+
+/*internal function No routes*/
+
+
+
+

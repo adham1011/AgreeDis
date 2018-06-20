@@ -36,6 +36,13 @@ var mongoose        =   require('mongoose'),
     },{ versionKey: false });
         // timeOut:Date,/*end time*/
         // timestamps: true,
+
+debate.path('basic_info.title').set(
+    (val)=>{
+    let sVal = String(val).toLowerCase();
+    return sVal;
+});
+
 debate.path('collaborator.collaborator_id').validate(
     userCtl.checkUser,'User not Found');
 
