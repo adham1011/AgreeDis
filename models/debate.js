@@ -1,4 +1,5 @@
 var mongoose        =   require('mongoose'),
+    userCtl         =   require('../controllers/users.ctl'),
     debate          =   new mongoose.Schema({
         basic_info:{
             title:{
@@ -35,11 +36,8 @@ var mongoose        =   require('mongoose'),
     },{ versionKey: false });
         // timeOut:Date,/*end time*/
         // timestamps: true,
-debate.pre('save',
-    (next)=>{
-        console.log('before saving');
-        return next();
-});
+debate.path('collaborator.collaborator_id').validate(
+    userCtl.checkUser,'User not Found');
 
 
 

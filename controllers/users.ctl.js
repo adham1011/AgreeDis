@@ -11,3 +11,21 @@ exports.getData = (req, res) =>{
         return;
     });
 }
+
+exports.checkUser = (val)=>{
+    var v = 'red';
+    Users.findOne({id:val},
+    (err, doc) =>{
+        if(err) {
+            console.log('error') 
+            v='red';
+        }
+        if(!doc){ 
+            console.log("Not Found")
+            v='red';
+        }else{
+            v='green';
+        }
+        return /green/.test(v)
+    })
+}
