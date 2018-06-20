@@ -76,14 +76,21 @@ exports.createDebate = (req, res) =>{
                 console.log(`Error: ${err}`);
                 res.json({Error:'ValidationError'})
             }else{
-                console.log(`Debate_id: ${product._id}\ndebOwner:${product.owner.owner_id}`);
                 var update = {$push:{debates:product._id}} ;
+                var updatecoll = {$push:{notifications:product._id}};
                 Users.findOneAndUpdate({id:product.owner.owner_id}, update,
-                (err)=>{
-                    if(err) res.json({Error:'finding error'})
-
-                    res.json({success:1});
-                })  
+                    err =>{
+                        if(err) console.log('Error with owner');
+                    }
+                );
+                Users.findOneAndUpdate({id:product.collaborator.collaborator_id},updatecoll,
+                    err=>{
+                        if(err) console.log('Error with callabrator');
+                        else {res.json(product)}
+                    }
+                );
+            
+                  
             }
 
             return;

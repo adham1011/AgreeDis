@@ -14,9 +14,7 @@ var mongoose        =   require('mongoose'),
         debates:[String],/*will hold the debates id*/
         claps:Number,
         vip:Number,
-        notifications:[{
-            debate_id:String
-         }]
+        notifications:[String]
     });
 
 
