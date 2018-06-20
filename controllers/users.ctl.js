@@ -12,6 +12,23 @@ exports.getData = (req, res) =>{
     });
 }
 
+exports.checkUser = (val)=>{
+    var v = 'red';
+    Users.findOne({id:val},
+    (err, doc) =>{
+        if(err) {
+            console.log('error') 
+            v='red';
+        }
+        if(!doc){ 
+            console.log("Not Found")
+            v='red';
+        }else{
+            v='green';
+        }
+        return /green/.test(v)
+    })
+
 exports.getUser = (req,res) =>{
     console.log(req.params.usr_id);
     Users.findOne({id:req.params.usr_id},'-profile.password',
