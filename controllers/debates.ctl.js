@@ -45,6 +45,44 @@ exports.getByUser = (req, res) =>{
         });
 }
 
+exports.deleteDebate = (req, res) =>{
+    Debates.findOne({_id:req.params.debate_id},
+        (err, this_debate)=>{
+            if(err){
+                console.log(`Error:${err}`);
+                res.json({Error:err})
+            }            
+            if(!this_debate){
+                console.log(`Debate not found`)
+                res.json({Error:'No Debates Found'})
+            }else{
+                console.log(`Removing Debate... \n`);
+               this_debate.remove();
+
+               Debates.findOne({_id:req.params.debate_id},
+                (err) => {
+                    console.log(`\nCheck after delete: ${JSON.stringify(Debates)}`);
+                    console.log(`Debate Removed ! \n`);
+                });
+
+            }
+        });
+/*
+    this_debate.remove({_id:req.params.debate_id},
+        (err) => {
+            if(err)
+            console.log(`err:${err}`);
+            else{
+            console.log(`debate Removed`);
+            Debates.findOne({_id:req.params.debate_id},
+                (err) => {
+                    console.log(`\nCheck after delete: ${JSON.stringify(Debates)}`);
+
+                });
+            };    
+        });*/
+},
+
 
 exports.createDebate = (req, res) =>{
     var debOwner = 41195
