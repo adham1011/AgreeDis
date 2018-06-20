@@ -27,8 +27,8 @@ exports.getByUser = (req, res) =>{
     console.log(`\nSearching Debate for user: ${usr}`)
 
     Debates.find({$or:[
-        {owner:{owner_id:usr}},
-        {collabrator:{collaborator_id:usr}}
+        {"owner.owner_id":usr},
+        {"collaborator.collaborator_id":usr},
         ]},
     (err,docs)=>{
             if(err){
