@@ -28,6 +28,7 @@ exports.checkUser = (val)=>{
         }
         return /green/.test(v)
     })
+}
 
 exports.getUser = (req,res) =>{
     console.log(req.params.usr_id);

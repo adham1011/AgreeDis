@@ -26,9 +26,9 @@ app.use(bodyParser.urlencoded({ extended:true}));
 /* Debate Set + Get */
 app.get('/debates/main')/*will get Top 10 recents Debates -sorting as user vip rate*/
 
-app.get('/debates/:debate_id',debateCtl.getById);
+app.get('/debates/:debate_id',debateCtl.getById)
 
-app.get('/debates/:usr_id',debateCtl.getByUser)
+app.get('/debates/userDebate/:usr_id',debateCtl.getByUser)
 
 // app.get('/debates/deleteDebate/:debate_id',debateCtl.deleteDebate)
 
