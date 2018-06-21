@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Agree-Dis API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="jumbotron" id="main">
+  <h1 class="display-5">Agree-Dis Service Api</h1>
+  <p class="lead">Agree-dis is a Service that Manage a Debation between 2 Users<br>
+    - 2 users publish an idea ,people can vote if they agree or not.
+  </p>
+  <hr class="my-4">
+  <p>This is a documentation for how to use this Service, this documentation contains requests, responses and errors</p>
+  <a class="btn btn-primary btn-md" href="#database" role="button">database</a>
+  <a class="btn btn-primary btn-md" href="#Global" role="button">Global methods</a>
+  <a class="btn btn-primary btn-md" href="#Debates" role="button">Debates methods</a>
+</div>
+
+
+<div class="card ">
+  <div class="card-header">
+    <h5>Debates Structure</h5>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      {<br>
+      basic_info:{<br>
+    &nbsp;&nbsp;&nbsp;title:String,<br>
+    &nbsp;&nbsp;&nbsp;img:String,<br>
+    &nbsp;&nbsp;&nbsp;voters:[String]<br>
+    &nbsp;&nbsp;&nbsp;status:Number<br>
+        /status can be 0=waiting,1=rejected,2=running,3=closed<br>
+},<br>
+owner:{<br>
+&nbsp;&nbsp;&nbsp;owner_id:Number,<br>
+&nbsp;&nbsp;&nbsp;owner_votes:Number<br>
+},<br>
+collaborator:{<br>
+&nbsp;&nbsp;&nbsp;collaborator_id:Number,<br>
+&nbsp;&nbsp;&nbsp;collaborator_votes:Number<br>
+&nbsp;}<br>
+}<br>
+    </p>
+
+  </div>
+</div>
+
+<div class="card ">
+  <div class="card-header">
+    <h5>Users Structure</h5>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      {<br>
+        id:Number,<br>
+        profile:{<br>
+        email:String,<br>
+        password:String,<br>
+        name:{<br>
+        &nbsp;&nbsp;&nbsp;first:String,<br>
+        &nbsp;&nbsp;&nbsp;last:String<br>
+        },<br>
+        age:Number,<br>
+        imgSrc:String,<br>
+        },<br>
+        debates:[String],/*will hold the debates id*/<br>
+        claps:Number,<br>
+        vip:Number,<br>
+        notifications:[String]<br>
+    </p>
+
+  </div>
+</div>
+
+
+
+
+<div id="Global" class="card text-center mt-4">
+  <div class="card-header">
+    <h5>Sign-in</h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'POST' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/profile/signIn</h5>
+    <p class="card-text">
+      Parametrs: { email },{ password }
+      you can't access any of the service route without Signin
+    </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+  <div class="card-footer text-muted">
+    on Error:  {Error: Signin Failed}<br>
+    on Success: {Success: you are signed in as { first: ' ', last: ' ' } }
+  </div>
+</div>
+
+<div class="card text-center mt-2">
+  <div class="card-header">
+    <h5>Sign-out</h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'GET' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/profile/signIn</h5>
+    <p class="card-text">
+      Sign out will Destroy the User Session
+    </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+</div>
+
+
+<div id="Debates" class="card text-center mt-4">
+  <div class="card-header">
+    <h5>Get Debate By Debate ID</h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'GET' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/debates/:debate_id</h5>
+    <p class="card-text">
+      Visitors can get only the public Debates.<br>
+      debate owner can Search for any kind of debate.
+    </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+  <div class="card-footer text-muted">
+    on Error:  {Error: Not authrized}  - this Error means that you need to sign in first<br>
+    on Error: {Error: no Debate Found} - Wrong debate id<br>
+    on Success: Debate Document
+  </div>
+</div>
+
+<div id="Debates" class="card text-center mt-2">
+  <div class="card-header">
+    <h5>Get Debates of User </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'GET' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/debates/:debate_id</h5>
+    <p class="card-text">
+      Visitors can get only the public Debates.<br>
+      debate owner can Search for any kind of debate.
+    </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+  <div class="card-footer text-muted">
+    on Error:  {Error: Not authrized}  - this Error means that you need to sign in first<br>
+    on Error: {Error: no Debate Found} - Wrong debate id<br>
+    on Success: Debate Document
+  </div>
+</div>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  </body>
+</html>
