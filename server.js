@@ -38,7 +38,7 @@ app.get('/debates/deleteDebate/:debate_id',debateCtl.deleteDebate)
 
 app.post('/debates/createDebate',debateCtl.createDebate);
 
-app.post('/debates/acceptDebate') //
+app.get('/debates/invitationResponse/:debate_id/:response',debateCtl.handleRequest) //
 
 app.post('/debates/updateDebate') //debate_id as a parameter
 
