@@ -133,3 +133,57 @@ exports.createDebate = (req, res) =>{
 
             return;
     })}
+
+
+
+exports.handleRequest = (req, res)=>{
+    var ans = Number(req.params.response),
+        condition = {id:req.session.user.id,notifications:{$in:[req.params.debate_id]}},
+        update    = {$push:{debates:req.params.debate_id},$pull:{notifications:req.params.debate_id}},
+        opts      = {multi:false};
+    // if(ans !=1 || ans !=2){
+    //     res.json({Error:'Fields ValidationError'})
+    //     return
+    // }
+
+    if(ans == 1){
+        update = {$pull:{notifications:req.params.debate_id}};
+    }else if(ans==2){
+
+    }else{
+        res.json({Error:'Fields ValidationError'})
+        return
+    }
+
+    Users.update(condition, update , opts,
+        (err,doc)=>{
+            if(err){
+                res.json({Error:err})
+                return;
+            }
+            if(doc.nModified == 0){
+                res.json({Error:'Access Denied'})
+                return;
+            }
+            console.log(doc);
+
+            var con     = {_id:req.params.debate_id},
+                update2 = {"basic_info.status":ans};
+            Debates.findOneAndUpdate(con,update2,
+                (err)=>{
+                    res.json({
+                        Debate:req.params.debate_id,
+                        status: ans
+                    });
+                }
+            )
+            return;
+        }
+    ) 
+}
+
+
+
+
+
+

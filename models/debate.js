@@ -15,7 +15,7 @@ var mongoose        =   require('mongoose'),
             status:{
                 type: Number,
                 default: 0
-            }/*0 = pending /1 = running /2 = closed*/
+            }/*0 = pending /1= rejected /2 = running /3 = closed*/
 
         },
     owner:{
