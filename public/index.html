@@ -103,7 +103,7 @@ collaborator:{<br>
   </div>
   <div class="card-body">
     <h5 class="card-title">'GET' Request</h5>
-    <h5>https://agree-dis.herokuapp.com/profile/signIn</h5>
+    <h5>https://agree-dis.herokuapp.com/profile/signOut</h5>
     <p class="card-text">
       Sign out will Destroy the User Session
     </p>
@@ -149,6 +149,109 @@ collaborator:{<br>
     on Error:  {Error: Not authrized}  - this Error means that you need to sign in first<br>
     on Error: {Error: no Debate Found} - Wrong debate id<br>
     on Success: Debate Document
+  </div>
+</div>
+-----
+
+<div id="Debates" class="card text-center mt-2">
+  <div class="card-header">
+    <h5>Get all Debates of User </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'GET' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/debates/userDebate/:usr_id</h5>
+    <p class="card-text">
+      Visitors can get only the public Debates.<br>
+      debate owner can Search for any kind of debate,<br>
+      get all users debate by users ID.
+    </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+  <div class="card-footer text-muted">
+    on Error:  {Error: Not authrized}  - this Error means that you need to sign in first<br>
+    on Error: {Error: no Debate Found} - Wrong debate id<br>
+    on Success: Debates Document
+  </div>
+</div>
+
+
+<div id="Debates" class="card text-center mt-2">
+  <div class="card-header">
+    <h5>Delete Debate </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'GET' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/debates/deleteDebate/:debate_id</h5>
+    <p class="card-text">
+      Delete Debate by debate ID<br>
+      this will also delete all elements linked to this debate from all the database.
+    </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+  <div class="card-footer text-muted">
+    on Error:'No Debates Found'  - this Error means there is no debate with this id<br>
+    on Success: {success:'Debate Deleted successfuly'}
+  </div>
+</div>
+
+
+<div id="Debates" class="card text-center mt-2">
+  <div class="card-header">
+    <h5>Creates new debate </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'POST' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/debates/createDebate</h5>
+    <p class="card-text">
+      Creates new Debate.<br>
+      this will automaticly send notification to the collaborator and wait for response.
+          </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+  <div class="card-footer text-muted">
+    on Error:  {Error:'ValidationError'} <br>
+    on Success: new Debate Document
+  </div>
+</div>
+
+
+<div id="Debates" class="card text-center mt-2">
+  <div class="card-header">
+    <h5>Invitation Response </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'GET' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/invitationResponse/:debate_id/:response</h5>
+    <p class="card-text">
+      response to new debate.<br>
+      if accpeted the debate status will be changed to running,<br>
+      if rejected the debate status will be changed to rejected.
+    </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+  <div class="card-footer text-muted">
+    on Error:  {Error:'ValidationError'} <br>
+    on Error: {Error:'Access Denied'} - the user is not the correct Collaborator<br>
+    on Success: returns debate id and the status
+  </div>
+</div>
+
+
+<div id="Debates" class="card text-center mt-2">
+  <div class="card-header">
+    <h5>Get Profile </h5>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">'GET' Request</h5>
+    <h5>https://agree-dis.herokuapp.com/profile/:usr_id</h5>
+    <p class="card-text">
+      Get Profile by user ID.<br>
+    </p>
+    <a href="#main" class="btn btn-primary">Back to Top</a>
+  </div>
+  <div class="card-footer text-muted">
+    on Error:  {Error: 'User not found'}  - User not found<br>
+    on Success: User Document
   </div>
 </div>
 
