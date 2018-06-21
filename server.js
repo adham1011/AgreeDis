@@ -42,7 +42,7 @@ app.get('/debates/invitationResponse/:debate_id/:response',debateCtl.handleReque
 
 app.post('/debates/updateDebate') //debate_id as a parameter
 
-app.post('/debates/vote') // debate_id/choice as a parameter
+app.post('/debates/vote',debateCtl.pickSide) // debate_id/choice as a parameter
 
 /* Users SET + Get */
 app.get('/profile/:usr_id',userCtl.getUser)

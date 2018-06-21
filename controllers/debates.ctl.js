@@ -183,6 +183,15 @@ exports.handleRequest = (req, res)=>{
             return;
         }
     ) 
+
+}
+
+
+
+
+
+exports.pickSide = (req, res)=>{
+    
 }
 
 
