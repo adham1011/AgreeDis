@@ -60,36 +60,39 @@ exports.deleteDebate = (req, res) =>{
             if(err){
                 console.log(`Error:${err}`);
                 res.json({Error:err})
+                return;
             }            
             if(!this_debate){
                 console.log(`Debate not found`)
                 res.json({Error:'No Debates Found'})
+                return;
             }else{
-                console.log(`Removing Debate... \n`);
-               this_debate.remove();
+                console.log(`Removing Debate Number: ${this_debate._id}\n`);
+                var current_owner_id = Number(this_debate.owner.owner_id);
+                console.log(`Owner ID : ${current_owner_id}`);
+                var current_collaborator_id =Number(this_debate.collaborator.collaborator_id);
+                console.log(`Owner ID : ${current_collaborator_id}`);
+                var current_debate_id = this_debate._id;
+                console.log(`Debate ID : ${current_debate_id}`);
+               Users.update( {$or: [{id:current_owner_id},
+                {id:current_collaborator_id}]},
+                { $pull: { debates: { $in:[ current_debate_id] } ,
+                          notifications: { $in:[ current_debate_id], }} },{multi:true},
+                (err)=>{if(err) res.json({Error:err})});
+
+                this_debate.remove();
+                res.json({success:'Debate Deleted successfuly'})
+
 
                Debates.findOne({_id:req.params.debate_id},
                 (err) => {
                     console.log(`\nCheck after delete: ${JSON.stringify(Debates)}`);
                     console.log(`Debate Removed ! \n`);
                 });
-
+               return;
             }
+            return;
         });
-/*
-    this_debate.remove({_id:req.params.debate_id},
-        (err) => {
-            if(err)
-            console.log(`err:${err}`);
-            else{
-            console.log(`debate Removed`);
-            Debates.findOne({_id:req.params.debate_id},
-                (err) => {
-                    console.log(`\nCheck after delete: ${JSON.stringify(Debates)}`);
-
-                });
-            };    
-        });*/
 },
 
 
