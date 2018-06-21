@@ -3,6 +3,15 @@ var   Debates    =  require('../models/debate'),
       Users      =  require('../models/user');
 
 
+exports.dashBoard = (req,res) =>{
+    if(!req.session.user){
+        res.json({Error:'You dont have permission'})
+        return;
+    }
+
+    res.json({user:req.session.user})
+    return;
+}
 
 exports.getById = (req, res) =>{
     Debates.findOne({_id:req.params.debate_id},
@@ -51,48 +60,52 @@ exports.deleteDebate = (req, res) =>{
             if(err){
                 console.log(`Error:${err}`);
                 res.json({Error:err})
+                return;
             }            
             if(!this_debate){
                 console.log(`Debate not found`)
                 res.json({Error:'No Debates Found'})
+                return;
             }else{
-                console.log(`Removing Debate... \n`);
-               this_debate.remove();
+                console.log(`Removing Debate Number: ${this_debate._id}\n`);
+                var current_owner_id = Number(this_debate.owner.owner_id);
+                console.log(`Owner ID : ${current_owner_id}`);
+                var current_collaborator_id =Number(this_debate.collaborator.collaborator_id);
+                console.log(`Owner ID : ${current_collaborator_id}`);
+                var current_debate_id = this_debate._id;
+                console.log(`Debate ID : ${current_debate_id}`);
+               Users.update( {$or: [{id:current_owner_id},
+                {id:current_collaborator_id}]},
+                { $pull: { debates: { $in:[ current_debate_id] } ,
+                          notifications: { $in:[ current_debate_id], }} },{multi:true},
+                (err)=>{if(err) res.json({Error:err})});
+
+                this_debate.remove();
+                res.json({success:'Debate Deleted successfuly'})
+
 
                Debates.findOne({_id:req.params.debate_id},
                 (err) => {
                     console.log(`\nCheck after delete: ${JSON.stringify(Debates)}`);
                     console.log(`Debate Removed ! \n`);
                 });
-
+               return;
             }
+            return;
         });
-/*
-    this_debate.remove({_id:req.params.debate_id},
-        (err) => {
-            if(err)
-            console.log(`err:${err}`);
-            else{
-            console.log(`debate Removed`);
-            Debates.findOne({_id:req.params.debate_id},
-                (err) => {
-                    console.log(`\nCheck after delete: ${JSON.stringify(Debates)}`);
-
-                });
-            };    
-        });*/
 },
 
 
 exports.createDebate = (req, res) =>{
-    var debOwner = 41195
+    var debOwner = Number(req.session.user.id) /*This will be dynamic id */
+    console.log(`\n${debOwner}\ntitle:${req.body.title}`)
     var newDebate = new Debates({
         basic_info:{
             title:req.body.title,
             img:req.body.img,
         },
         owner:{
-            owner_id:Number(debOwner)
+            owner_id:debOwner
         },
         collaborator:{
             collaborator_id:Number(req.body.collaborator)
@@ -104,14 +117,21 @@ exports.createDebate = (req, res) =>{
                 console.log(`Error: ${err}`);
                 res.json({Error:'ValidationError'})
             }else{
-                console.log(`Debate_id: ${product._id}\ndebOwner:${product.owner.owner_id}`);
                 var update = {$push:{debates:product._id}} ;
+                var updatecoll = {$push:{notifications:product._id}};
                 Users.findOneAndUpdate({id:product.owner.owner_id}, update,
-                (err)=>{
-                    if(err) res.json({Error:'finding error'})
-
-                    res.json({success:1});
-                })  
+                    err =>{
+                        if(err) console.log('Error with owner');
+                    }
+                );
+                Users.findOneAndUpdate({id:product.collaborator.collaborator_id},updatecoll,
+                    err=>{
+                        if(err) console.log('Error with callabrator');
+                        else {res.json(product)}
+                    }
+                );
+            
+                  
             }
 
             return;

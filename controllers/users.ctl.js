@@ -2,6 +2,37 @@ const mongoose =  require('mongoose');
 var   Users    =  require('../models/user');
 //access the MODEL
 //for route /final-ideas/getAllIdeas
+
+exports.access = (req, res, next)=>{
+    if(!req.session.user){
+        console.log("You don't authorized")
+        res.json({Error:'not authorized, try to sign in'})
+        return
+    }
+    return next()
+}
+exports.signIn = (req, res) =>{
+    Users.findOne({"profile.email":req.body.email,"profile.password":req.body.password},
+        (err,User)=>{
+            if(err){
+                console.log('Some errors in sign in')
+                res.json({Error: err})
+                return;
+            }
+            if(!User){
+                console.log('User Not Found')
+                res.json({Error: 'Signinig in failed'})
+                return;
+            }
+            req.session.user = User
+            res.json({Success:`you are signed in as ${User.profile.name} `});
+
+            return
+        }
+    )
+}
+
+
 exports.getData = (req, res) =>{
     Users.find({},
     (err, docs) => {
@@ -50,3 +81,10 @@ exports.getUser = (req,res) =>{
 
 
 }
+
+
+/*internal function No routes*/
+
+
+
+

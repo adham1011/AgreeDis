@@ -36,20 +36,16 @@ var mongoose        =   require('mongoose'),
     },{ versionKey: false });
         // timeOut:Date,/*end time*/
         // timestamps: true,
+
+debate.path('basic_info.title').set(
+    (val)=>{
+    let sVal = String(val).toLowerCase();
+    return sVal;
+});
+
 debate.path('collaborator.collaborator_id').validate(
     userCtl.checkUser,'User not Found');
 
-debate.pre('remove',
-(next)=>{ //Pre Remove hook
-        //Users.update
-        //delete deb from owner
-        //check the status of the deb
-        //delete deb from coll notification
-        //delete deb from coll
-
-        console.log(`triggered before Remove\n`);
-    return next();
-});
 var Debate  = mongoose.model('Debate',debate);
 
 module.exports = Debate; 
