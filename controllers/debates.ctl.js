@@ -4,13 +4,18 @@ var   Debates    =  require('../models/debate'),
 
 
 exports.dashBoard = (req,res) =>{
-    if(!req.session.user){
-        res.json({Error:'You dont have permission'})
-        return;
-    }
-
-    res.json({user:req.session.user})
-    return;
+    Debates.find({
+        "basic_info.status":2,
+    }).limit(10).sort({"time.publish_time":-1}).exec(
+        (err,doc) =>{
+            if(err){
+                console.log(`Error: ${err}`)
+                res.json({Error:err})
+            }
+            res.json(doc)
+            return
+        }
+    )
 }
 
 exports.getById = (req, res) =>{
@@ -24,7 +29,31 @@ exports.getById = (req, res) =>{
                 console.log(`Debate not found`)
                 res.json({Error:'Debate Not Found'})
             }else{
-                res.json(doc)
+                let stat = doc.basic_info.status
+                let usr = req.session.user.id
+                if(stat == 1){
+                    if(usr == doc.owner.owner_id){ 
+                        res.json(doc)
+                    }else{
+                     res.json({
+                            Status:'private Debate',
+                            Error:'No permission'
+                        })                    
+                 }
+                    return
+                }else if( stat == 0 ){
+                    if(usr == doc.owner.owner_id || usr == doc.collaborator.collaborator_id){
+                        res.json(doc)
+                    }else{
+                        res.json({
+                            Status:'private Debate',
+                            Error:'No permission'
+                        })
+                    }
+                    return
+                }else{
+                    res.json(doc)
+                }
             }
 
             return;
@@ -98,7 +127,6 @@ exports.deleteDebate = (req, res) =>{
 
 exports.createDebate = (req, res) =>{
     var debOwner = Number(req.session.user.id) /*This will be dynamic id */
-    console.log(`\n${debOwner}\ntitle:${req.body.title}`)
     var newDebate = new Debates({
         basic_info:{
             title:req.body.title,
@@ -109,6 +137,9 @@ exports.createDebate = (req, res) =>{
         },
         collaborator:{
             collaborator_id:Number(req.body.collaborator)
+        },
+        time:{
+            end_time: req.body.end_time
         }
     });
     newDebate.save(

@@ -15,8 +15,19 @@ var mongoose        =   require('mongoose'),
             status:{
                 type: Number,
                 default: 0
-            }/*0 = pending /1= rejected /2 = running /3 = closed*/
-
+            },/*0 = pending /1= rejected /2 = running /3 = closed*/
+            time:{
+                publish_time:{
+                    type:Date,
+                    default:Date.now
+                },
+                end_time:{
+                    type:Number,/*time by Hours: Example 2 means 2 hours*/
+                    min:0.5,/*min - half hour*/
+                    max:24,/*max 24 hours from publish date*/
+                    default:0.5
+                }
+            }
         },
     owner:{
         owner_id:Number,
@@ -39,9 +50,19 @@ var mongoose        =   require('mongoose'),
 
 debate.path('basic_info.title').set(
     (val)=>{
+    console.log(`toLowerCase : ${val}`)
     let sVal = String(val).toLowerCase();
     return sVal;
 });
+
+debate.path('basic_info.time.publish_time').set(
+    (val)=>{
+        console.log("i'm here");
+        let date = new Date(val.getFullYear(),val.getMonth(),val.getDay());
+        console.log(`\nDate:${date}`)
+        return date
+    }
+)
 
 debate.path('collaborator.collaborator_id').validate(
     userCtl.checkUser,'User not Found');

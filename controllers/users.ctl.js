@@ -1,5 +1,7 @@
 const mongoose =  require('mongoose');
 var   Users    =  require('../models/user');
+var   jwt      =  require('jsonwebtoken');
+var   consts   =  require('../consts');
 //access the MODEL
 //for route /final-ideas/getAllIdeas
 
@@ -24,9 +26,14 @@ exports.signIn = (req, res) =>{
                 res.json({Error: 'Signinig in failed'})
                 return;
             }
-            req.session.user = User
-            res.json({Success:`you are signed in as ${User.profile.name} `});
+            const token = jwt.sign({
+                id: User.id,
+                username: User.profile.name.first
 
+            }, consts.jwtSecret);
+            res.json({token});
+            // req.session.user = User
+            // res.json({User})
             return
         }
     )

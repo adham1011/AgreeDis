@@ -34,7 +34,7 @@ app.get('/debates/:debate_id',debateCtl.getById)
 
 app.get('/debates/userDebate/:usr_id',debateCtl.getByUser)
 
-app.get('/debates/deleteDebate/:debate_id',debateCtl.deleteDebate)
+app.delete('/debates/deleteDebate/:debate_id',debateCtl.deleteDebate)
 
 app.post('/debates/createDebate',debateCtl.createDebate);
 
