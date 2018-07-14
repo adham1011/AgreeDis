@@ -6,35 +6,63 @@ var   consts   =  require('../consts');
 //for route /final-ideas/getAllIdeas
 
 exports.access = (req, res, next)=>{
-    if(!req.session.user){
-        console.log("You don't authorized")
-        res.json({Error:'not authorized, try to sign in'})
-        return
+    const authorizationHeader = req.headers['authorization'];
+    let token;
+    if(authorizationHeader){
+        token = authorizationHeader.split(' ')[1];
     }
-    return next()
+    if(token){
+        jwt.verify(token, consts.jwtSecret,
+            (err, decoded) =>{
+                if(err) {
+                    res.json({Error:"Failed to authenticate"})
+                }else{
+                    Users.findOne({id:decoded.id},'-profile.password',
+                        (err,User)=>{
+                            if(err){
+                                console.log('err in finding user')
+                                res.status(404).json({Error: err})
+                                return;
+                             }
+                            if(!User){
+                                console.log('User Not Found')
+                                res.status(404).json({Error: 'User Not Found'})
+                            }else{
+                                req.currentUser = User;
+                                // res.status(200).json(req.currentUser);
+                                next();
+                            }
+                        }
+                    )
+                }
+        });
+    }else{
+        res.json({Error:'No Token Provieded'})
+    }
 }
+
 exports.signIn = (req, res) =>{
     Users.findOne({"profile.email":req.body.email,"profile.password":req.body.password},
         (err,User)=>{
             if(err){
                 console.log('Some errors in sign in')
-                res.json({Error: err})
+                res.status(404).json({Error: err})
                 return;
             }
             if(!User){
                 console.log('User Not Found')
-                res.json({Error: 'Signinig in failed'})
+                res.status(404).json({Error: 'User Not Found'})
                 return;
             }
             const token = jwt.sign({
                 id: User.id,
-                username: User.profile.name.first
+                username: User.profile.name.first,
+                img:User.profile.imgSrc
 
             }, consts.jwtSecret);
             res.json({token});
             // req.session.user = User
             // res.json({User})
-            return
         }
     )
 }
