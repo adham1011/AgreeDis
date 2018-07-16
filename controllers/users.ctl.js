@@ -120,9 +120,8 @@ exports.getUser = (req,res) =>{
 }
 
 exports.getNotifications = (req,res) =>{
-    console.log(req.params.usr_id);
-    if(req.params.usr_id!=req.currentUser.id) return;
-    Users.findOne({id:req.params.usr_id},'-profile.password',
+    console.log(req.currentUser.id);
+    Users.findOne({id:req.currentUser.id},'-profile.password',
     (err, result) => {
             if(err){
                 console.log(`Error: ${err}`)
@@ -144,7 +143,7 @@ exports.getNotifications = (req,res) =>{
                                 return;
                             }                   
                             if(!debate) {
-                                console.log('fuck') 
+                                console.log('check') 
                                 return;
                             }
                             console.log(debate.owner.owner_id);

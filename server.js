@@ -55,7 +55,7 @@ app.get('/profile/searchFriendList/:query',userCtl.searchFriendList)
 
 app.post('/profile/updateProfile') // profile_id as a parameter
 
-app.get('/notifications/:usr_id',userCtl.getNotifications)
+app.get('/notifications',userCtl.getNotifications)
 
 
 
