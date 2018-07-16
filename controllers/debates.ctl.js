@@ -297,7 +297,7 @@ exports.handleRequest = (req, res)=>{
 
 
 
-                        }, debate.basic_info.time.end_time * 1000);
+                        }, debate.basic_info.time.end_time * 60000);
                             // this code will not block, and will only run at the time
                     }
                     res.json({
@@ -355,11 +355,6 @@ exports.pickSide = (req,res) =>{
 }
 
 
-exports.closeDebate = (req,res) => {
-    console.log(debate_id);
-
-
-}
 
 
 
