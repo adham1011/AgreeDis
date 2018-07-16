@@ -175,6 +175,40 @@ exports.getNotifications = (req,res) =>{
 
 
 
+exports.searchFriendList =(req,res)=>{
+    var query = req.params.query.toLowerCase();
+    Users.findOne({id:req.currentUser.id},
+        (err,main)=>{
+            var options =[];
+            var length = main.friends.length;
+            var getUser = (i)=>{
+                if (i<length){
+                    Users.findOne({id:main.friends[i]},
+                        (err,user)=>{
+                            if(user){
+                                let patt = new RegExp(query);
+                                if(patt.test(user.profile.name.first) || patt.test(user.profile.name.last)){
+                                    let u = {
+                                        id:user.id,
+                                        name: `${user.profile.name.first} ${user.profile.name.last}`,
+                                    }
+                                    options.push(u);
+                                    getUser(i+1);
+                                }/*small if*/else{
+                                   getUser(i+1);
+                                }
+                            }/*search if*/
+                        }
+                    )/*findOne*/
+                }else{
+                    res.json(options); 
+                }
+            }/*function*/ 
+            getUser(0);
+        });
+}
+
+
 /*internal function No routes*/
 
 

@@ -14,6 +14,7 @@ var mongoose        =   require('mongoose'),
         claps:Number,
         vip:Number,
         wins:Number,
+        friends:[Number], /*array of friends id's*/
         notifications:[String]
     });
 
