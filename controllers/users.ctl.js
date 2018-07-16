@@ -1,5 +1,6 @@
 const mongoose =  require('mongoose');
 var   Users    =  require('../models/user');
+var   Debates  =  require('../models/debate');
 var   jwt      =  require('jsonwebtoken');
 var   consts   =  require('../consts');
 //access the MODEL
@@ -112,10 +113,67 @@ exports.getUser = (req,res) =>{
              res.json(result);
          }
              return;
+    
     });
 
 
 }
+
+exports.getNotifications = (req,res) =>{
+    console.log(req.params.usr_id);
+    if(req.params.usr_id!=req.currentUser.id) return;
+    Users.findOne({id:req.params.usr_id},'-profile.password',
+    (err, result) => {
+            if(err){
+                console.log(`Error: ${err}`)
+                res.json({Error:err})
+            }
+             if(!result){
+              console.log(`ERROR FindOne failed :${err}`);
+              res.json({Error: 'User not found'});
+            }else{
+                var notifications =[];
+                var length = result.notifications.length;
+                var getDebates = (i)=>{
+                    console.log(`noti: ${result.notifications[i]}`);
+                    if(i<length){
+                        Debates.findOne({_id:result.notifications[i]},
+                        (err, debate)=>{
+                            if(err) {
+                                console.log(err);
+                                return;
+                            }                   
+                            if(!debate) {
+                                console.log('fuck') 
+                                return;
+                            }
+                            console.log(debate.owner.owner_id);
+                            Users.findOne({id:debate.owner.owner_id},
+                                (err,usr)=>{
+                                    if(err) return;
+                                let mydebate = {
+                                    _id: debate._id,
+                                    title:debate.basic_info.title,
+                                    owner: usr.profile.name
+                                }
+                                notifications.push(mydebate);
+                                getDebates(i+1);
+                            });
+                        });  
+                    }else{
+                        res.json({notifications});
+                    }
+                }/*function*/
+             }
+                getDebates(0);
+
+});
+}
+
+
+
+
+
 
 exports.searchFriendList =(req,res)=>{
     var query = req.params.query.toLowerCase();
