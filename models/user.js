@@ -14,6 +14,7 @@ var mongoose        =   require('mongoose'),
         debates:[String],/*will hold the debates id*/
         claps:Number,
         vip:Number,
+        friends:[Number], /*array of friends id's*/
         notifications:[String]
     });
 
