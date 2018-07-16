@@ -44,12 +44,16 @@ app.post('/debates/updateDebate') //debate_id as a parameter
 
 app.post('/debates/vote',debateCtl.pickSide) // debate_id/choice as a parameter
 
+
 /* Users SET + Get */
 app.get('/profile/:usr_id',userCtl.getUser)
 
 // app.post('/profile/createProfile') // profile data
 
 app.post('/profile/updateProfile') // profile_id as a parameter
+
+app.get('/notifications/:usr_id',userCtl.getNotifications)
+
 
 
 app.listen(port,

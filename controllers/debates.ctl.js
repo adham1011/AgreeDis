@@ -159,20 +159,21 @@ exports.deleteDebate = (req, res) =>{
 
 
 exports.createDebate = (req, res) =>{
+    console.log(req.body.end_time);
     var debOwner = Number(req.currentUser.id) /*This will be dynamic id */
     var newDebate = new Debates({
         basic_info:{
             title:req.body.title,
             img:req.body.img,
+            time:{
+            end_time: req.body.end_time
+            }
         },
         owner:{
             owner_id:debOwner
         },
         collaborator:{
             collaborator_id:Number(req.body.collaborator)
-        },
-        time:{
-            end_time: req.body.end_time
         }
     });
     newDebate.save(
@@ -205,8 +206,9 @@ exports.createDebate = (req, res) =>{
 
 
 exports.handleRequest = (req, res)=>{
+    console.log(req.currentUser.id);
     var ans = Number(req.params.response),
-        condition = {id:req.session.user.id,notifications:{$in:[req.params.debate_id]}},
+        condition = {id:req.currentUser.id,notifications:{$in:[req.params.debate_id]}},
         update    = {$push:{debates:req.params.debate_id},$pull:{notifications:req.params.debate_id}},
         opts      = {multi:false};
     // if(ans !=1 || ans !=2){
@@ -238,7 +240,66 @@ exports.handleRequest = (req, res)=>{
             var con     = {_id:req.params.debate_id},
                 update2 = {"basic_info.status":ans};
             Debates.findOneAndUpdate(con,update2,
-                (err)=>{
+                (err,debate)=>{
+                    if(ans==2){
+                        setTimeout(function(){
+                            //  close debate
+                            console.log("start Counting to close in");
+                            console.log(debate.basic_info.time.end_time);
+                            var update3 = {"basic_info.status":3};
+                            Debates.findOneAndUpdate(con,update3,
+                                (err,cDebate)=>{
+                                    if(err){
+                                    res.json({Error:err})
+                                    return;
+                                    }else{
+                                        console.log("a Debate has been closed");
+                                        console.log("updating winner atts");
+                                      if(cDebate.owner.owner_votes>cDebate.collaborator.collaborator_votes){
+                                        console.log("owner WinZ");
+                                        var winner = cDebate.owner.owner_id,
+                                            newClaps = cDebate.owner.owner_votes;
+                                      }if(cDebate.owner.owner_votes<cDebate.collaborator.collaborator_votes){
+                                        var winner = cDebate.collaborator.collaborator_id;
+                                            newClaps = cDebate.collaborator.collaborator_votes;
+                                        console.log("Collaborator WinZ");
+                                      }else{
+                                        console.log("Draw");
+                                      }  
+                                     var winnerCondition = {id:winner};
+                                     var winnerUpdate = {$inc:{wins: 1 , claps:newClaps}};
+                                       console.log("updated claps and wins updating experience");
+                                       Users.findOneAndUpdate(winnerCondition,winnerUpdate,
+                                        (err,Usr)=>{
+                                             if(err){
+                                                res.json({Error:err})
+                                                return;
+                                    }else{
+                                        console.log(Usr);
+                                      var VipCalc = Math.floor(Usr.claps*0.005 + Usr.wins*0.02);
+                                      console.log(VipCalc);
+                                      var winnerUpdateVip = {vip:VipCalc};
+                                      Users.findOneAndUpdate(winnerCondition,winnerUpdateVip,
+                                        (err,doc)=>{
+                                            if(err){
+                                         return;
+                                         }else{
+                                            console.log("Updated VIP status");
+                                        }})
+                                     }
+
+                                       })
+
+    
+                                    }
+
+                                })
+
+
+
+                        }, debate.basic_info.time.end_time * 1000);
+                            // this code will not block, and will only run at the time
+                    }
                     res.json({
                         Debate:req.params.debate_id,
                         status: ans
@@ -254,12 +315,51 @@ exports.handleRequest = (req, res)=>{
 
 
 
+exports.pickSide = (req,res) =>{
+    console.log(req.currentUser.vip);
+    console.log(req.body.side_flag); // 0=Disagree 1=agree
+    console.log(req.currentUser.id);
+    console.log(req.body.debate_id);
+    var owner,collab;
+    if(req.body.side_flag==0){
+        owner =0;
+        collab=(req.currentUser.vip+1)
+    }else{
+        owner = (req.currentUser.vip+1)
+        collab =0 
+    }
 
-exports.pickSide = (req, res)=>{
-    
+    var update = {$push:{"basic_info.voters":req.currentUser.id},
+                 $inc:{"owner.owner_votes":owner , "collaborator.collaborator_votes" : collab}
+    };
+    var conditions = {_id:req.body.debate_id,
+                      "basic_info.status":2,
+                      "basic_info.voters":{$ne:req.currentUser.id}
+                     }
+    Debates.findOneAndUpdate(conditions, update, 
+            (err,doc)=>{
+                if(err){
+                    console.log(`Error: ${err}`)
+                     res.json({Error:err})
+                     return
+                }
+                if(!doc){
+                     console.log(`Debate not found`)
+                     res.json({Error:'Debate Not Found'})
+                     return
+                     }
+                    res.json({Msg:'successfuly voted'})
+            }
+    )
+    return // executes
 }
 
 
+exports.closeDebate = (req,res) => {
+    console.log(debate_id);
+
+
+}
 
 
 

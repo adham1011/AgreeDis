@@ -3,8 +3,7 @@ var mongoose        =   require('mongoose'),
         id:Number,
         profile:{
             email:String,
-            password:String,
-            name:{
+             name:{
                 first:String,
                 last:String,
             },
@@ -14,6 +13,7 @@ var mongoose        =   require('mongoose'),
         debates:[String],/*will hold the debates id*/
         claps:Number,
         vip:Number,
+        wins:Number,
         notifications:[String]
     });
 

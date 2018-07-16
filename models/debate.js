@@ -1,5 +1,4 @@
 var mongoose        =   require('mongoose'),
-    userCtl         =   require('../controllers/users.ctl'),
     debate          =   new mongoose.Schema({
         basic_info:{
             title:{
@@ -9,7 +8,7 @@ var mongoose        =   require('mongoose'),
             },
             img:String,
             voters:{
-                type:[String],
+                type:[Number],
                 default:[]
             },
             status:{
@@ -24,7 +23,7 @@ var mongoose        =   require('mongoose'),
                 end_time:{
                     type:Number,/*time by Hours: Example 2 means 2 hours*/
                     min:0.5,/*min - half hour*/
-                    max:24,/*max 24 hours from publish date*/
+                    max:90,/*max 24 hours from publish date*/
                     default:0.5
                 }
             }
@@ -64,8 +63,6 @@ debate.path('basic_info.time.publish_time').set(
     }
 )
 
-debate.path('collaborator.collaborator_id').validate(
-    userCtl.checkUser,'User not Found');
 
 var Debate  = mongoose.model('Debate',debate);
 
