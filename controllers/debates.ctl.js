@@ -6,17 +6,56 @@ var   Debates    =  require('../models/debate'),
 exports.dashBoard = (req,res) =>{
     Debates.find({
         "basic_info.status":2,
-    }).limit(10).sort({"time.publish_time":-1}).exec(
+    }).sort({"basic_info.time.publish_time":-1}).limit(10).exec(
         (err,doc) =>{
             if(err){
                 console.log(`Error: ${err}`)
                 res.json({Error:err})
+                return;
             }
-            res.json(doc)
-            return
-        }
-    )
+            if(doc.length<=0){
+                res.json({doc,users:[]});
+                console.log(`doc : ${doc}`)
+            }else{
+                var users = [];
+                var alreadyUser=[];
+                var length = doc.length;
+                var getusers = (i)=>{
+                    if(i<length){
+                        Users.findOne({id:doc[i].collaborator.collaborator_id},'-profile.password -notifications -debates -profile.age',
+                            (err,usr)=>{
+                                if(err){
+                                    res.status(300).json({Error:err});
+                                }else{
+                                    if(!(alreadyUser.includes(usr.id))){
+                                        alreadyUser.push(usr.id);
+                                        users.push(usr);
+                                    }
+                                    Users.findOne({id:doc[i].owner.owner_id},'-profile.password -notifications -debates -profile.age',
+                                        (err,ok)=>{
+                                            if(err){
+                                               res.status(300).json({Error:err});
+                                            }else{
+                                                if(!(alreadyUser.includes(ok.id))){
+                                                    alreadyUser.push(ok.id);
+                                                    users.push(ok);
+                                                }
+                                                getusers(i+1);
+                                            }
+                                        });/*usr_2*/
+                                }
+                            });
+                    }else{
+                        res.json({doc,users});
+                    }
+            }/*function*/
+            getusers(0);
+        }/*else limit*/
+    });
 }
+
+
+
 
 exports.getById = (req, res) =>{
     Debates.findOne({_id:req.params.debate_id},
@@ -66,7 +105,7 @@ exports.getByUser = (req, res) =>{
 
     Debates.find({$or:[
         {"owner.owner_id":usr},
-        // {"collaborator.collaborator_id":usr},
+        {"collaborator.collaborator_id":usr},
         ]},
     (err,docs)=>{
             if(err){
@@ -87,30 +126,24 @@ exports.getByUser = (req, res) =>{
                             if(err) return;
                             if(!(alreadyUser.includes(usr.id))){
                                 alreadyUser.push(usr.id);
-                                // let de = docs[i].toObject();
-                                // de.collaborator.fulluser = usr;
-                                // console.log(de.collaborator.fulluser.id);
                                 users.push(usr);
                             }
+                        Users.findOne({id:docs[i].owner.owner_id},'-profile.password -notifications -debates -profile.age',
+                            (err, owner)=>{
+                                if(err) return;
+                                if(!(alreadyUser.includes(owner.id))){
+                                alreadyUser.push(owner.id);
+                                users.push(owner);
+                            }
                             getusers(i+1);
+
+                        });
+
                         });  
                     }else{
                         res.json({docs,users});
                     }
                 }/*function*/
-
-                // for(let i=0; i<length;i++){
-                //     Users.findOne({id:docs[i].collaborator.collaborator_id},
-                //         (err, usr)=>{
-                //             if(err) return;
-                //             let de = docs[i].toObject();
-                //             de.collaborator.fulluser = usr;
-                //             console.log(de.collaborator.fulluser.id);
-                //             new_record.push(de);
-                //         }
-                //     )
-                // }
-                // res.json({new_record});
                 getusers(0);
             }/*else*/
     });
